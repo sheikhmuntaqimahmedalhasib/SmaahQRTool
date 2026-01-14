@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SMAAH QR Tool</title>
+<link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<h1><span style="color:#22c55e">SMAAH</span> QR Tool</h1>
+
+<div class="toggle">
+    <button id="btnTextQR" onclick="showTextQR()">Text to QR</button>
+    <button id="btnQRText" onclick="showQRText()">QR to Text</button>
+</div>
+
+<div class="container" id="textToQR">
+    <div class="card">
+        <h3>Put Text</h3>
+        <textarea id="qrText" placeholder="Enter text or URL"></textarea>
+        <button class="action generate" onclick="generateQR()">Generate QR</button>
+    </div>
+
+    <div class="card">
+        <h3>QR Code</h3>
+        <div class="preview" id="qrBox"></div>
+        <button class="action download" onclick="downloadQR()">Download QR</button>
+    </div>
+</div>
+
+<div class="container hidden" id="qrToText">
+    <div class="card">
+        <h3>Upload QR Code</h3>
+        <div class="preview">
+            <img id="uploadedQR" style="display:none;">
+        </div>
+        <input type="file" accept="image/*" onchange="previewQR(this)">
+        <button class="action generate" onclick="readQR()">Read QR Code</button>
+    </div>
+
+    <div class="card">
+        <h3>Result</h3>
+
+        <div class="result-box">
+            <p id="decodedText"></p>
+        </div>
+
+        <div class="btn-group">
+            <button class="action download" onclick="downloadText()">Download</button>
+            <button class="action copy" onclick="copyText()">Copy</button>
+        </div>
+
+        <button class="action generate" onclick="goToBrowser()">Go to Browser</button>
+    </div>
+</div>
+
+</div>
+
+<script src="qrcode.min.js"></script>
+<script src="jsqr.js"></script>
+
+<script>
+let decodedData = "";
+let uploadedImageData = "";
+
+window.onload = () => {
+    const page = sessionStorage.getItem("qrPage");
+    if(page === "qr"){
+        showQRText();
+    }else{
+        showTextQR();
+    }
+};
+
+function showTextQR(){
+    textToQR.classList.remove("hidden");
+    qrToText.classList.add("hidden");
+    btnTextQR.classList.add("active");
+    btnQRText.classList.remove("active");
+    sessionStorage.setItem("qrPage","text");
+}
+
+function showQRText(){
+    qrToText.classList.remove("hidden");
+    textToQR.classList.add("hidden");
+    btnQRText.classList.add("active");
+    btnTextQR.classList.remove("active");
+    decodedText.innerText = "";
+    sessionStorage.setItem("qrPage","qr");
+}
+
+function generateQR(){
+    const text = qrText.value.trim();
+    if(!text) return alert("Enter text");
+    qrBox.innerHTML = "";
+    new QRCode(qrBox,{ text, width:180, height:180 });
+}
+
+function downloadQR(){
+    const img = qrBox.querySelector("img");
+    if(!img) return;
+    const a = document.createElement("a");
+    a.href = img.src;
+    a.download = "SmaahTextToQrCode.png";
+    a.click();
+}
+
+function previewQR(input){
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        uploadedImageData = e.target.result;
+        uploadedQR.src = uploadedImageData;
+        uploadedQR.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+}
+
+function readQR(){
+    if(!uploadedImageData){
+        decodedText.innerText = "No data found";
+        return;
+    }
+    const img = new Image();
+    img.src = uploadedImageData;
+    img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img,0,0);
+        const data = ctx.getImageData(0,0,canvas.width,canvas.height);
+        const code = jsQR(data.data, canvas.width, canvas.height);
+        decodedData = code ? code.data : "";
+        decodedText.innerText = decodedData || "No data found";
+    };
+}
+
+function downloadText(){
+    if(!decodedData) return;
+    const blob = new Blob([decodedData],{type:"text/plain"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "DecodedQRText.txt";
+    a.click();
+}
+
+function copyText(){
+    if(!decodedData) return;
+    navigator.clipboard.writeText(decodedData);
+    alert("Copied!");
+}
+
+function goToBrowser(){
+    if(decodedData.startsWith("http")){
+        window.open(decodedData,"_blank");
+    }else{
+        alert("Not a valid URL");
+    }
+}
+</script>
+
+</body>
+</html>
