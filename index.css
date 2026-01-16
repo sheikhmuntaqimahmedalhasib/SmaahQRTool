@@ -179,7 +179,7 @@ button.action:hover{
 /* =========================
    MOBILE UI LIKE SCREENSHOTTT
    ========================= */
-@media (max-width: 576px){
+@media (max-width: 423px){
 
     body{
         align-items:flex-start;
