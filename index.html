@@ -10,7 +10,7 @@
 
 <div class="wrapper">
 
-<h1><span style="color:#22c55e">SMAAH</span> QR Tool</h1>
+<h1><span style="color:#22c55e">SMAAH</span> QR TOOL</h1>
 
 <div class="toggle">
     <button id="btnTextQR" onclick="showTextQR()">Text to QR</button>
@@ -104,7 +104,7 @@ function downloadQR(){
     if(!img) return;
     const a = document.createElement("a");
     a.href = img.src;
-    a.download = "SmaahTextToQrCode.png";
+    a.download = "SmaahTextToQr.png";
     a.click();
 }
 
@@ -145,7 +145,7 @@ function downloadText(){
     const blob = new Blob([decodedData],{type:"text/plain"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "DecodedQRText.txt";
+    a.download = "SmaahQrToText.txt";
     a.click();
 }
 

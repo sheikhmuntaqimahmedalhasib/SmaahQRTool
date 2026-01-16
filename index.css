@@ -20,7 +20,7 @@ body{
 }
 
 h1{
-    margin-bottom:16px;
+    margin-bottom:25px;
 }
 
 /* TOGGLE */
@@ -179,7 +179,7 @@ button.action:hover{
 /* =========================
    RESPONSIVE ONLY
    ========================= */
-@media (max-width: 768px){
+@media (max-width: 576px){
 
     body{
         align-items:flex-start;
