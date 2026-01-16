@@ -177,9 +177,9 @@ button.action:hover{
 .hidden{ display:none; }
 
 /* =========================
-   RESPONSIVE ONLY
+   MOBILE UI LIKE SCREENSHOT
    ========================= */
-@media (max-width: 576px){
+@media (max-width: 600px){
 
     body{
         align-items:flex-start;
@@ -191,35 +191,60 @@ button.action:hover{
         padding:0 14px;
     }
 
+    h1{
+        font-size:22px;
+        margin-bottom:20px;
+    }
+
+    .toggle{
+        margin-bottom:22px;
+    }
+
     .container{
         flex-direction:column;
-        gap:20px;
+        width:100%;
+        gap:22px;
     }
 
     .card{
         width:100%;
-    }
-
-    .preview{
-        height:180px;
+        padding:22px;
+        border-radius:18px;
+        background:linear-gradient(
+            180deg,
+            #0f172a,
+            #020617
+        );
+        box-shadow:0 20px 40px rgba(0,0,0,0.45);
     }
 
     textarea{
-        height:120px;
+        height:150px;
+        font-size:15px;
+        border-radius:14px;
     }
 
-    .result-box{
-        height:160px;
+    .preview{
+        height:220px;
+        border-radius:16px;
     }
 
-    h1{
-        font-size:22px;
+    button.action{
+        height:48px;
+        font-size:15px;
+        border-radius:999px;
     }
 
-    .toggle{
-        flex-wrap:wrap;
+    .btn-group{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .btn-group button{
+        width:100%;
     }
 }
+
 
 /* =========================
    QR AUTO SCALE (ADDED)
