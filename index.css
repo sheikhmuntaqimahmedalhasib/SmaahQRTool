@@ -177,9 +177,9 @@ button.action:hover{
 .hidden{ display:none; }
 
 /* =========================
-   MOBILE UI LIKE SCREENSHOT
+   MOBILE UI LIKE SCREENSHOTTT
    ========================= */
-@media (max-width: 600px){
+@media (max-width: 576px){
 
     body{
         align-items:flex-start;
