@@ -142,11 +142,16 @@ function readQR(){
 
 function downloadText(){
     if(!decodedData) return;
-    const blob = new Blob([decodedData],{type:"text/plain"});
+
+    const encoded = encodeURIComponent(decodedData);
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
+
+    a.href = "data:text/plain;charset=utf-8," + encoded;
     a.download = "SmaahQrToText.txt";
+
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
 }
 
 function copyText(){
