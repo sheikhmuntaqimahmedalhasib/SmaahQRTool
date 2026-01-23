@@ -58,6 +58,7 @@ function downloadQR(){
     });
 }
 
+
 function previewQR(input){
     const file = input.files[0];
     if(!file) return;
