@@ -15,7 +15,7 @@ body{
 }
 
 .wrapper {
-    width: 95%; /* মোবাইলে দুই পাশে সামান্য জায়গা রাখবে */
+    width: 95%;
     max-width: 900px;
     text-align: center;
     padding: 20px 0;
@@ -55,7 +55,7 @@ h1{
     display: flex;
     gap: 20px;
     justify-content: center;
-    flex-wrap: wrap; /* এটি মোবাইলে কার্ডগুলোকে নিচে নামিয়ে আনবে */
+    flex-wrap: wrap;
 }
 
 .card {

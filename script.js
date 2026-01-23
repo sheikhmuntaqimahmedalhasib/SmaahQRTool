@@ -38,34 +38,45 @@ function generateQR(){
     });
 }
 
+function getUniqueFileName(prefix, extension) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const second = String(now.getSeconds()).padStart(2, '0');
+
+    return `${prefix}_${year}${month}${day}__${hour}${minute}${second}.${extension}`;
+}
+
 function downloadQR() {
     const canvas = qrBox.querySelector("canvas");
     const img = qrBox.querySelector("img");
 
     if (!canvas && !img) {
-        alert("আগে QR Code জেনারেট করুন");
+        alert("Generate QR first");
         return;
     }
 
     const dataURL = (img && img.src.startsWith("data")) ? img.src : canvas.toDataURL("image/png");
+    const fileName = getUniqueFileName("SmaahQR", "png");
 
     const parts = dataURL.split(';base64,');
     const contentType = parts[0].split(':')[1];
     const raw = window.atob(parts[1]);
-    const rawLength = raw.length;
-    const uInt8Array = new Uint8Array(rawLength);
+    const uInt8Array = new Uint8Array(raw.length);
 
-    for (let i = 0; i < rawLength; ++i) {
+    for (let i = 0; i < raw.length; ++i) {
         uInt8Array[i] = raw.charCodeAt(i);
     }
 
     const blob = new Blob([uInt8Array], { type: contentType });
-
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     
     link.href = url;
-    link.download = "SmaahQR.png";
+    link.download = fileName; 
     
     document.body.appendChild(link);
     link.click();
@@ -76,20 +87,24 @@ function downloadQR() {
     }, 100);
 }
 
-function downloadText(){
-    if(!decodedData) return alert("No text to download");
+function downloadText() {
+    if (!decodedData) return alert("No text to download");
+
+    const fileName = getUniqueFileName("SmaahText", "txt");
 
     const blob = new Blob([decodedData], { type: "text/plain" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
 
     a.href = url;
-    a.download = "SmaahText.txt";
+    a.download = fileName; 
     document.body.appendChild(a);
     a.click();
     
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 100);
 }
 
 function previewQR(input){
