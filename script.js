@@ -39,54 +39,42 @@ function generateQR(){
     });
 }
 
-// এই ফাংশনটি এখন ল্যাপটপ এবং মোবাইল দুই জায়গাতেই কাজ করবে
-function downloadQR(){
+function downloadQR() {
     const canvas = qrBox.querySelector("canvas");
     const img = qrBox.querySelector("img");
 
-    if(!canvas && !img){
-        alert("আগে QR Code জেনারেট করুন");
+    if (!canvas && !img) {
+        alert("আগে QR Code তৈরি করুন");
         return;
     }
 
-    // ল্যাপটপ এবং মোবাইল দুইটার জন্যই ডাটা ইউআরএল তৈরি
-    let dataURL;
-    if (img && img.src.startsWith("data")) {
-        dataURL = img.src;
-    } else if (canvas) {
-        dataURL = canvas.toDataURL("image/png");
+    // ১. ইমেজ ডাটা নেওয়া (ক্যানভাস বা ইমেজ থেকে)
+    const dataURL = (img && img.src.startsWith("data")) ? img.src : canvas.toDataURL("image/png");
+
+    // ২. Base64 থেকে Blob তৈরি করার ফাংশন (এটিই মোবাইল ডাউনলোড নিশ্চিত করবে)
+    const byteString = atob(dataURL.split(',')[1]);
+    const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
     }
+    const blob = new Blob([ab], {type: mimeString});
 
-    if(!dataURL) {
-        alert("কিউআর কোড ইমেজ পাওয়া যায়নি!");
-        return;
-    }
-
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if(isMobile){
-        // মোবাইলের জন্য পপ-আপ না করে সরাসরি নিউ ট্যাব বা ডাউনলোড ট্রাই করবে
-        const link = document.createElement("a");
-        link.href = dataURL;
-        link.download = "SmaahQR.png";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        // ব্যাকআপ হিসেবে নতুন ট্যাবে ওপেন করা (যাতে ইউজার সেভ করতে পারে)
-        setTimeout(() => {
-            const win = window.open();
-            win.document.write(`<img src="${dataURL}" style="width:100%;"><p style="text-align:center;">Long press to save image</p>`);
-        }, 500);
-    } else {
-        // ল্যাপটপের জন্য সরাসরি ডাউনলোড
-        const a = document.createElement("a");
-        a.href = dataURL;
-        a.download = "SmaahQR.png";
-        document.body.appendChild(a);
-        a.click();
+    // ৩. ব্লব ইউআরএল তৈরি করে ডাউনলোড ট্রিগার করা
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "SmaahQR.png";
+    
+    document.body.appendChild(a);
+    a.click(); // এটি মোবাইলে সরাসরি ডাউনলোড শুরু করবে
+    
+    // ক্লিনআপ
+    setTimeout(() => {
         document.body.removeChild(a);
-    }
+        window.URL.revokeObjectURL(url);
+    }, 100);
 }
 
 // টেক্সট ডাউনলোডের আধুনিক এবং সেফ পদ্ধতি
