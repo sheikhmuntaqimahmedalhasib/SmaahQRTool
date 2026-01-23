@@ -31,7 +31,6 @@ function generateQR(){
     const text = qrText.value.trim();
     if(!text) return alert("Enter text");
     qrBox.innerHTML = "";
-    // কিউআর জেনারেট করা
     new QRCode(qrBox, {
         text: text,
         width: 180,
@@ -48,10 +47,8 @@ function downloadQR() {
         return;
     }
 
-    // ইমেজ বা ক্যানভাস থেকে ডাটা নেওয়া
     const dataURL = (img && img.src.startsWith("data")) ? img.src : canvas.toDataURL("image/png");
 
-    // ১. Base64 ডাটাকে বাইনারি (Blob) তে কনভার্ট করা
     const parts = dataURL.split(';base64,');
     const contentType = parts[0].split(':')[1];
     const raw = window.atob(parts[1]);
@@ -64,25 +61,21 @@ function downloadQR() {
 
     const blob = new Blob([uInt8Array], { type: contentType });
 
-    // ২. একটি টেম্পোরারি লিঙ্ক তৈরি করা
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     
     link.href = url;
-    link.download = "SmaahQR.png"; // ফাইলের নাম
+    link.download = "SmaahQR.png";
     
-    // ৩. ডিরেক্ট ক্লিক ট্রিগার (এটি মোবাইলে সরাসরি ফাইল ডাউনলোড শুরু করবে)
     document.body.appendChild(link);
     link.click();
     
-    // ৪. কাজ শেষ হলে লিঙ্ক মুছে ফেলা
     setTimeout(() => {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
     }, 100);
 }
 
-// টেক্সট ডাউনলোডের আধুনিক এবং সেফ পদ্ধতি
 function downloadText(){
     if(!decodedData) return alert("No text to download");
 
@@ -99,7 +92,6 @@ function downloadText(){
     document.body.removeChild(a);
 }
 
-// বাকি ফাংশনগুলো আগের মতোই থাকবে
 function previewQR(input){
     const file = input.files[0];
     if(!file) return;

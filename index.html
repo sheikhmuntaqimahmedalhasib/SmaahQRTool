@@ -1,67 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>SMAAH QR Tool</title>
-<link rel="stylesheet" href="index.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>SMAAH QR Tool</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div class="wrapper">
+    <h1><span style="color:#50c700">SMAAH</span> QR TOOL</h1>
 
-<h1><span style="color:#50c700">SMAAH</span> QR TOOL</h1>
-
-<div class="toggle">
-    <button id="btnTextQR" onclick="showTextQR()">Text to QR</button>
-    <button id="btnQRText" onclick="showQRText()">QR to Text</button>
-</div>
-
-<div class="container" id="textToQR">
-    <div class="card">
-        <h3>Put Text</h3>
-        <textarea id="qrText" placeholder="Enter text or URL"></textarea>
-        <button class="action generate" onclick="generateQR()">Generate QR</button>
+    <div class="toggle">
+        <button id="btnTextQR" onclick="showTextQR()" class="active">Text to QR</button>
+        <button id="btnQRText" onclick="showQRText()">QR to Text</button>
     </div>
 
-    <div class="card">
-        <h3>QR Code</h3>
-        <div class="preview" id="qrBox"></div>
-        <button class="action download" onclick="downloadQR()">Download QR</button>
-    </div>
-</div>
-
-<div class="container hidden" id="qrToText">
-    <div class="card">
-        <h3>Upload QR Code</h3>
-        <div class="preview">
-            <img id="uploadedQR" style="display:none;">
-        </div>
-        <input type="file" accept="image/*" onchange="previewQR(this)">
-        <button class="action generate" onclick="readQR()">Read QR Code</button>
-    </div>
-
-    <div class="card">
-        <h3>Result</h3>
-
-        <div class="result-box">
-            <p id="decodedText"></p>
+    <div class="container" id="textToQR">
+        <div class="card">
+            <h3>Put Text</h3>
+            <textarea id="qrText" placeholder="Enter text or URL"></textarea>
+            <button class="action generate" onclick="generateQR()">Generate QR</button>
         </div>
 
-        <div class="btn-group">
-            <button class="action download" onclick="downloadText()">Download</button>
-            <button class="action copy" onclick="copyText()">Copy</button>
+        <div class="card">
+            <h3>QR Code</h3>
+            <div class="preview" id="qrBox"></div>
+            <button class="action download" onclick="downloadQR()">Download QR</button>
+        </div>
+    </div>
+
+    <div class="container hidden" id="qrToText">
+        <div class="card">
+            <h3>Upload QR Code</h3>
+            <div class="preview">
+                <img id="uploadedQR" style="display:none;">
+            </div>
+            <input type="file" accept="image/*" onchange="previewQR(this)">
+            <button class="action generate" onclick="readQR()">Read QR Code</button>
         </div>
 
-        <button class="action generate" onclick="goToBrowser()">Go to Browser</button>
+        <div class="card">
+            <h3>Result</h3>
+            <div class="result-box">
+                <p id="decodedText"></p>
+            </div>
+            <div class="btn-group">
+                <button class="action download" onclick="downloadText()">Download</button>
+                <button class="action copy" onclick="copyText()">Copy</button>
+            </div>
+            <button class="action generate" onclick="goToBrowser()">Go to Browser</button>
+        </div>
     </div>
-</div>
 
+    <footer class="footer">
+        <p>&copy; 2026 <span style="color:#22c55e">Sheikh Muntaqim Ahmed Al Hasib</span>. All rights reserved.</p>
+    </footer>
 </div>
 
 <script src="qrcode.min.js"></script>
 <script src="jsqr.js"></script>
 <script src="script.js"></script>
-
 </body>
 </html>
