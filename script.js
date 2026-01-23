@@ -27,34 +27,34 @@ function showQRText(){
     sessionStorage.setItem("qrPage","qr");
 }
 
-function generateQR() {
+function generateQR(){
     const text = qrText.value.trim();
-    if (!text) return alert("Enter text");
+    if(!text) return alert("Enter text");
     qrBox.innerHTML = "";
 
     new QRCode(qrBox, {
         text: text,
-        width: 180,
-        height: 180,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
+        width: 150, 
+        height: 150,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
     });
 
     setTimeout(() => {
         const qrCanvas = qrBox.querySelector('canvas');
         const qrImg = qrBox.querySelector('img');
-        
-        const applyStyle = (el) => {
-            if (el) {
-                el.style.padding = "20px";    
-                el.style.background = "#fff"; 
-                el.style.boxSizing = "border-box";
-            }
+
+        const style = {
+            padding: "15px",
+            background: "#fff",
+            width: "180px",
+            height: "180px",
+            boxSizing: "border-box"
         };
 
-        applyStyle(qrCanvas);
-        applyStyle(qrImg);
+        if(qrCanvas) Object.assign(qrCanvas.style, style);
+        if(qrImg) Object.assign(qrImg.style, style);
     }, 50);
 }
 
@@ -77,17 +77,18 @@ function downloadQR() {
         return;
     }
 
-    const padding = 40;
+    const targetSize = 180;
+    const padding = 30;
     const tempCanvas = document.createElement("canvas");
     const tempCtx = tempCanvas.getContext("2d");
 
-    tempCanvas.width = canvas.width + padding;
-    tempCanvas.height = canvas.height + padding;
+    tempCanvas.width = targetSize;
+    tempCanvas.height = targetSize;
 
     tempCtx.fillStyle = "#ffffff";
-    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.fillRect(0, 0, targetSize, targetSize);
 
-    tempCtx.drawImage(canvas, padding / 2, padding / 2);
+    tempCtx.drawImage(canvas, 15, 15, 150, 150);
 
     const dataURL = tempCanvas.toDataURL("image/png");
     const fileName = getUniqueFileName("SmaahQR", "png");

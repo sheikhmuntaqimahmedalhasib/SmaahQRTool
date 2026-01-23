@@ -106,10 +106,10 @@ input[type="file"]{
     margin-bottom:18px;
 }
 
-.preview img{
-    width:180px;
-    height:180px;
-    object-fit:contain;
+.preview img, .preview canvas {
+    max-width: 180px !important;
+    max-height: 180px !important;
+    display: block;
 }
 
 .result-box{
