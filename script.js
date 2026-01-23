@@ -46,8 +46,8 @@ function getUniqueFileName(prefix, extension) {
     const hour = String(now.getHours()).padStart(2, '0');
     const minute = String(now.getMinutes()).padStart(2, '0');
     const second = String(now.getSeconds()).padStart(2, '0');
-
-    return `${prefix}_${year}${month}${day}__${hour}${minute}${second}.${extension}`;
+    
+    return prefix + "_" + year + month + day + "_" + hour + minute + second + "." + extension;
 }
 
 function downloadQR() {
