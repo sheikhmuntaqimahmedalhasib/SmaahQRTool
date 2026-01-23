@@ -27,15 +27,35 @@ function showQRText(){
     sessionStorage.setItem("qrPage","qr");
 }
 
-function generateQR(){
+function generateQR() {
     const text = qrText.value.trim();
-    if(!text) return alert("Enter text");
+    if (!text) return alert("Enter text");
     qrBox.innerHTML = "";
+
     new QRCode(qrBox, {
         text: text,
         width: 180,
-        height: 180
+        height: 180,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
     });
+
+    setTimeout(() => {
+        const qrCanvas = qrBox.querySelector('canvas');
+        const qrImg = qrBox.querySelector('img');
+        
+        const applyStyle = (el) => {
+            if (el) {
+                el.style.padding = "20px";    
+                el.style.background = "#fff"; 
+                el.style.boxSizing = "border-box";
+            }
+        };
+
+        applyStyle(qrCanvas);
+        applyStyle(qrImg);
+    }, 50);
 }
 
 function getUniqueFileName(prefix, extension) {
@@ -46,38 +66,42 @@ function getUniqueFileName(prefix, extension) {
     const hour = String(now.getHours()).padStart(2, '0');
     const minute = String(now.getMinutes()).padStart(2, '0');
     const second = String(now.getSeconds()).padStart(2, '0');
-    
+
     return prefix + "_" + year + month + day + "_" + hour + minute + second + "." + extension;
 }
 
 function downloadQR() {
     const canvas = qrBox.querySelector("canvas");
-    const img = qrBox.querySelector("img");
-
-    if (!canvas && !img) {
+    if (!canvas) {
         alert("Generate QR first");
         return;
     }
 
-    const dataURL = (img && img.src.startsWith("data")) ? img.src : canvas.toDataURL("image/png");
+    const padding = 40;
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+
+    tempCanvas.width = canvas.width + padding;
+    tempCanvas.height = canvas.height + padding;
+
+    tempCtx.fillStyle = "#ffffff";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    tempCtx.drawImage(canvas, padding / 2, padding / 2);
+
+    const dataURL = tempCanvas.toDataURL("image/png");
     const fileName = getUniqueFileName("SmaahQR", "png");
 
     const parts = dataURL.split(';base64,');
-    const contentType = parts[0].split(':')[1];
     const raw = window.atob(parts[1]);
     const uInt8Array = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; ++i) uInt8Array[i] = raw.charCodeAt(i);
 
-    for (let i = 0; i < raw.length; ++i) {
-        uInt8Array[i] = raw.charCodeAt(i);
-    }
-
-    const blob = new Blob([uInt8Array], { type: contentType });
+    const blob = new Blob([uInt8Array], { type: 'image/png' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
-    
     link.href = url;
-    link.download = fileName; 
-    
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     
