@@ -41,28 +41,29 @@ function downloadQR(){
         return;
     }
 
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    // Detect mobile
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-
-    ctx.drawImage(img, 0, 0);
-
-    canvas.toBlob(function(blob){
-        const url = URL.createObjectURL(blob);
-
+    if(isMobile){
+        // Mobile safe way
+        const win = window.open();
+        win.document.write(`
+            <img src="${img.src}" style="width:100%;height:auto;">
+            <p style="text-align:center;font-family:sans-serif">
+                Long press → Save Image
+            </p>
+        `);
+    }else{
+        // Desktop real download
         const a = document.createElement("a");
-        a.href = url;
+        a.href = img.src;
         a.download = "SmaahTextToQr.png";
-
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-
-        URL.revokeObjectURL(url);
-    }, "image/png");
+    }
 }
+
 
 function previewQR(input){
     const file = input.files[0];
