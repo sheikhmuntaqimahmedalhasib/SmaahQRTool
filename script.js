@@ -44,35 +44,40 @@ function downloadQR() {
     const img = qrBox.querySelector("img");
 
     if (!canvas && !img) {
-        alert("আগে QR Code তৈরি করুন");
+        alert("আগে QR Code জেনারেট করুন");
         return;
     }
 
-    // ১. ইমেজ ডাটা নেওয়া (ক্যানভাস বা ইমেজ থেকে)
+    // ইমেজ বা ক্যানভাস থেকে ডাটা নেওয়া
     const dataURL = (img && img.src.startsWith("data")) ? img.src : canvas.toDataURL("image/png");
 
-    // ২. Base64 থেকে Blob তৈরি করার ফাংশন (এটিই মোবাইল ডাউনলোড নিশ্চিত করবে)
-    const byteString = atob(dataURL.split(',')[1]);
-    const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    const blob = new Blob([ab], {type: mimeString});
+    // ১. Base64 ডাটাকে বাইনারি (Blob) তে কনভার্ট করা
+    const parts = dataURL.split(';base64,');
+    const contentType = parts[0].split(':')[1];
+    const raw = window.atob(parts[1]);
+    const rawLength = raw.length;
+    const uInt8Array = new Uint8Array(rawLength);
 
-    // ৩. ব্লব ইউআরএল তৈরি করে ডাউনলোড ট্রিগার করা
+    for (let i = 0; i < rawLength; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i);
+    }
+
+    const blob = new Blob([uInt8Array], { type: contentType });
+
+    // ২. একটি টেম্পোরারি লিঙ্ক তৈরি করা
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "SmaahQR.png";
+    const link = document.createElement("a");
     
-    document.body.appendChild(a);
-    a.click(); // এটি মোবাইলে সরাসরি ডাউনলোড শুরু করবে
+    link.href = url;
+    link.download = "SmaahQR.png"; // ফাইলের নাম
     
-    // ক্লিনআপ
+    // ৩. ডিরেক্ট ক্লিক ট্রিগার (এটি মোবাইলে সরাসরি ফাইল ডাউনলোড শুরু করবে)
+    document.body.appendChild(link);
+    link.click();
+    
+    // ৪. কাজ শেষ হলে লিঙ্ক মুছে ফেলা
     setTimeout(() => {
-        document.body.removeChild(a);
+        document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
     }, 100);
 }
