@@ -31,40 +31,82 @@ function generateQR(){
     const text = qrText.value.trim();
     if(!text) return alert("Enter text");
     qrBox.innerHTML = "";
-    new QRCode(qrBox,{ text, width:180, height:180 });
+    // কিউআর জেনারেট করা
+    new QRCode(qrBox, {
+        text: text,
+        width: 180,
+        height: 180
+    });
 }
 
+// এই ফাংশনটি এখন ল্যাপটপ এবং মোবাইল দুই জায়গাতেই কাজ করবে
 function downloadQR(){
+    const canvas = qrBox.querySelector("canvas");
     const img = qrBox.querySelector("img");
-    if(!img){
-        alert("Generate QR first");
+
+    if(!canvas && !img){
+        alert("আগে QR Code জেনারেট করুন");
         return;
     }
 
-    // Detect mobile
+    // ল্যাপটপ এবং মোবাইল দুইটার জন্যই ডাটা ইউআরএল তৈরি
+    let dataURL;
+    if (img && img.src.startsWith("data")) {
+        dataURL = img.src;
+    } else if (canvas) {
+        dataURL = canvas.toDataURL("image/png");
+    }
+
+    if(!dataURL) {
+        alert("কিউআর কোড ইমেজ পাওয়া যায়নি!");
+        return;
+    }
+
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     if(isMobile){
-        // Mobile safe way
-        const win = window.open();
-        win.document.write(`
-            <img src="${img.src}" style="width:100%;height:auto;">
-            <p style="text-align:center;font-family:sans-serif">
-                Long press → Save Image
-            </p>
-        `);
-    }else{
-        // Desktop real download
+        // মোবাইলের জন্য পপ-আপ না করে সরাসরি নিউ ট্যাব বা ডাউনলোড ট্রাই করবে
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download = "SmaahQR.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // ব্যাকআপ হিসেবে নতুন ট্যাবে ওপেন করা (যাতে ইউজার সেভ করতে পারে)
+        setTimeout(() => {
+            const win = window.open();
+            win.document.write(`<img src="${dataURL}" style="width:100%;"><p style="text-align:center;">Long press to save image</p>`);
+        }, 500);
+    } else {
+        // ল্যাপটপের জন্য সরাসরি ডাউনলোড
         const a = document.createElement("a");
-        a.href = img.src;
-        a.download = "SmaahTextToQr.png";
+        a.href = dataURL;
+        a.download = "SmaahQR.png";
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
     }
 }
 
+// টেক্সট ডাউনলোডের আধুনিক এবং সেফ পদ্ধতি
+function downloadText(){
+    if(!decodedData) return alert("No text to download");
 
+    const blob = new Blob([decodedData], { type: "text/plain" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "SmaahText.txt";
+    document.body.appendChild(a);
+    a.click();
+    
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+// বাকি ফাংশনগুলো আগের মতোই থাকবে
 function previewQR(input){
     const file = input.files[0];
     if(!file) return;
@@ -97,24 +139,11 @@ function readQR(){
     };
 }
 
-function downloadText(){
-    if(!decodedData) return;
-
-    const encoded = encodeURIComponent(decodedData);
-    const a = document.createElement("a");
-
-    a.href = "data:text/plain;charset=utf-8," + encoded;
-    a.download = "SmaahQrToText.txt";
-
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
 function copyText(){
     if(!decodedData) return;
-    navigator.clipboard.writeText(decodedData);
-    alert("Copied!");
+    navigator.clipboard.writeText(decodedData).then(() => {
+        alert("Copied!");
+    });
 }
 
 function goToBrowser(){
