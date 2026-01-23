@@ -38,11 +38,11 @@ h1{
     background:transparent;
     color:#22c55e;
     cursor:pointer;
-    transition: transform 0.35s ease;
+    transition: transform 0.5s ease;
 }
 
 .toggle button:hover{
-    transform: scale(1.06);
+    transform: translateX(5px);
 }
 
 .toggle button.active{
